@@ -1,0 +1,32 @@
+MapAlytics/
+├── public/                           
+│   ├── css/                          
+│   │   └── All the CSS files go here
+│   ├── js/                           
+│   │   └── index.js                  
+│   ├── icons/                        
+│   │   └── Store all icon files here
+│   ├── index.html                    
+│   └── views/                       
+│       └── 
+│   └── partialviews/                
+│       └──     
+├── src/                              
+│   ├── routes/                      
+│   │   └── api.mjs                    
+│   ├── controllers/                  
+│   │   └── apiController.mjs         
+│   ├── middlewares/                  
+│   │   └── logger.mjs                 
+│   ├── python-scripts/  
+│   │   ├── data/     
+│   │   ├── StateElectorates/                       
+│   │   ├── FederalElectorates/                       
+│   │   ├── Postcode/       
+│   │   ├── requirements.txt                                   
+│   │   └── mapGenerator.py
+│   └── app.js                         
+├── package.json                      
+├── package-lock.json                 
+├── .env                
+└── .gitignore                        

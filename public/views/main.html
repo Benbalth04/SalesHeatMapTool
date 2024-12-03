@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapAlytics | Main</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+</head>
+<body>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <div id="sidebar-placeholder"></div>
+    <div class="main-container">
+        <header class="navbar">
+            <h1>MapAlytics</h1>
+
+            <div class="globe-icon" id ="settings-icon">
+                <img src="../icons/globe-icon.svg">
+            </div>
+
+            <div class="settings-icon" id ="settings-icon">
+                <img src="../icons/settings-icon.svg" alt="Settings" title="Settings">
+            </div>
+        </header>
+        <main class="content">
+            <div class="dropdowns-container">
+                <select id="country-dropdown">
+                    <option value="" disabled selected>Country</option>
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Australia">Australia</option>
+                </select>
+                <select id="resolution-dropdown">
+                    <option value="" disabled selected>Resolution</option>
+                    <option value="Postcode">Postcode</option>
+                    <option value="StateElectorates">State Electorates</option>
+                    <option value="FederalElectorates">Federal Electorates</option>
+                </select>
+                <select id="year-dropdown">
+                    <option value="" disabled selected>Years</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                </select>
+                <select id="state-dropdown">
+                    <option value="" disabled selected>States</option>
+                    <option value="NSW">New South Wales</option>
+                    <option value="VIC">Victoria</option>
+                    <option value="QLD">Queensland</option>
+                    <option value="ACT">Australian Capital Territory</option>
+                    <option value="SA">South Australia</option>
+                    <option value="WA">Western Australia</option>
+                    <option value="NT">Northern Territory</option>
+                    <option value="TAS">Tasmania</option>
+                </select>
+            </div>
+            <button id="generate-map-btn" disabled>Generate Map</button>
+            <div id="map-container" class="map-container">
+                <!-- Rendered HTML map will load here -->
+            </div>
+        </main>
+    </div>
+    <script src="../js/main.js"></script>
+    <script src="../js/settings.js"></script>
+</body>
+</html>

@@ -1,3 +1,0 @@
-# MapAlyticsMain
-
-test

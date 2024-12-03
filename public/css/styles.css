@@ -1,0 +1,89 @@
+
+/* Navbar styles */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border-bottom: 1px solid #dfe3e8;
+}
+
+.navbar h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #212b36;
+}
+
+.settings-icon img {
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+}
+
+.globe-icon img {
+    width: 3rem;
+    height: 3rem;
+    align-items: center;
+}
+
+/* Dropdowns container */
+.dropdowns-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.dropdowns-container select {
+    margin: 0;
+    padding: 10px;
+    border: 1px solid #dfe3e8;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 200px;
+}
+
+.dropdowns-container select:focus {
+    border-color: #5c6ac4;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(92, 106, 196, 0.3);
+}
+
+/* Content styles */
+.content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#generate-map-btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #5c6ac4;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#generate-map-btn:disabled {
+    background-color: #dfe3e8;
+    cursor: not-allowed;
+}
+
+#map-container {
+    width: 90%;
+    height: 700px;
+    background-color: #f6f6f7;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
