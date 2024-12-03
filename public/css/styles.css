@@ -13,44 +13,103 @@
     font-size: 2rem;
     font-weight: 800;
     color: #212b36;
+    margin: 0;
+    flex: 1; /* Ensures the text stays on the left */
 }
 
-.settings-icon img {
-    width: 2rem;
-    height: 2rem;
-    cursor: pointer;
+.globe-icon {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Adjust for the globe's width */
+    display: flex;
+    align-items: center; /* Ensures the icon is vertically aligned */
 }
 
 .globe-icon img {
     width: 3rem;
     height: 3rem;
-    align-items: center;
 }
 
-/* Dropdowns container */
+.settings-icon {
+    flex: 1; /* Pushes the settings icon to the right */
+    display: flex;
+    justify-content: flex-end;
+}
+
+.settings-icon img {
+    width: 3rem;
+    height: 3rem;
+    cursor: pointer;
+}
+
 .dropdowns-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 20px; /* Space between dropdowns */
     margin: 20px 0;
 }
 
-.dropdowns-container select {
-    margin: 0;
-    padding: 10px;
+.dropdown {
+    position: relative;
+    width: 300px;
     border: 1px solid #dfe3e8;
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    width: 200px;
+    background-color: #ffffff;
 }
 
-.dropdowns-container select:focus {
+.dropdown-toggle {
+    padding: 10px;
+    color: #212b36;
+}
+
+.dropdown-toggle:hover {
+    background-color: #f1f1f1;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #dfe3e8;
+    border-radius: 4px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dropdown-menu label {
+    display: block;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.dropdown-menu label:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-menu input {
+    margin-right: 10px;
+}
+
+/* Show dropdown menu on active */
+.dropdown.active .dropdown-menu {
+    display: block;
+}
+
+/* Focus effect */
+.dropdown:focus-within {
     border-color: #5c6ac4;
-    outline: none;
     box-shadow: 0 0 0 2px rgba(92, 106, 196, 0.3);
 }
+
 
 /* Content styles */
 .content {
@@ -80,7 +139,7 @@
 
 #map-container {
     width: 90%;
-    height: 700px;
+    height: 600px;
     background-color: #f6f6f7;
     border: 1px solid #dfe3e8;
     border-radius: 8px;

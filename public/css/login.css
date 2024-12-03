@@ -1,0 +1,101 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f6f6f7; /* Shopify's light background */
+    color: #212b36; /* Dark grey text */
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 10px 0;
+    color: #212b36;
+}
+
+p.subtitle {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #637381; /* Subtle grey for subtitles */
+}
+
+a {
+    color: #5c6ac4; /* Shopify's blue */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f6f6f7;
+}
+
+/* Card */
+.login-card {
+    background: white;
+    border: 1px solid #dfe3e8; /* Light grey border */
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(50, 50, 93, 0.1), 0px 1px 3px rgba(0, 0, 0, 0.08);
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.logo {
+    max-width: 150px;
+    margin-bottom: 20px;
+}
+
+/* Form */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+}
+
+input {
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #dfe3e8;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: all 0.2s ease;
+}
+
+input:focus {
+    border-color: #5c6ac4;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(92, 106, 196, 0.3);
+}
+
+.primary-button {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #5c6ac4;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.primary-button:hover {
+    background-color: #4959a4;
+}

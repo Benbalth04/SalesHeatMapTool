@@ -18,41 +18,34 @@
                 <img src="../icons/globe-icon.svg">
             </div>
 
-            <div class="globe-icon" id ="settings-icon">
+            <div class="settings-icon" id ="settings-icon">
                 <img src="../icons/settings-icon.svg" alt="Settings" title="Settings">
             </div>
         </header>
         <main class="content">
             <div class="dropdowns-container">
-                <select id="country-dropdown">
-                    <option value="" disabled selected>Country</option>
-                    <option value="United States">United States</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                </select>
-                <select id="resolution-dropdown">
-                    <option value="" disabled selected>Resolution</option>
-                    <option value="Postcode">Postcode</option>
-                    <option value="StateElectorates">State Electorates</option>
-                    <option value="FederalElectorates">Federal Electorates</option>
-                </select>
-                <select id="year-dropdown">
-                    <option value="" disabled selected>Years</option>
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                    <option value="2023">2023</option>
-                </select>
-                <select id="state-dropdown">
-                    <option value="" disabled selected>States</option>
-                    <option value="NSW">New South Wales</option>
-                    <option value="VIC">Victoria</option>
-                    <option value="QLD">Queensland</option>
-                    <option value="ACT">Australian Capital Territory</option>
-                    <option value="SA">South Australia</option>
-                    <option value="WA">Western Australia</option>
-                    <option value="NT">Northern Territory</option>
-                    <option value="TAS">Tasmania</option>
-                </select>
+                <div class="dropdown" id="state-dropdown-container">
+                    <div class="dropdown-toggle">States</div>
+                    <div class="dropdown-menu" id = 'state-dropdown'>
+                        <label><input type="checkbox" value="New South Wales"> New South Wales</label>
+                        <label><input type="checkbox" value="Victoria"> Victoria</label>
+                        <label><input type="checkbox" value="Queensland"> Queensland</label>
+                        <label><input type="checkbox" value="Australian Capital Territory"> Australian Capital Territory</label>
+                        <label><input type="checkbox" value="South Australia"> South Australia</label>
+                        <label><input type="checkbox" value="Western AustraliaWA"> Western Australia</label>
+                        <label><input type="checkbox" value="Northern Territory"> Northern Territory</label>
+                        <label><input type="checkbox" value="Tasmania"> Tasmania</label>
+                    </div>
+                </div>
+            
+                <div class="dropdown" id="year-dropdown-container">
+                    <div class="dropdown-toggle">Years</div>
+                    <div class="dropdown-menu" id = 'year-dropdown'>
+                        <label><input type="checkbox" value="2021"> 2021</label>
+                        <label><input type="checkbox" value="2022"> 2022</label>
+                        <label><input type="checkbox" value="2023"> 2023</label>
+                    </div>
+                </div>
             </div>
             <button id="generate-map-btn" disabled>Generate Map</button>
             <div id="map-container" class="map-container">

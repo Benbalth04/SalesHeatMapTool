@@ -20,14 +20,19 @@ router.post('/generate-map', (req, res) => {
 
     console.log('Request Body:', req.body);
 
-    const { resolution, year, country, state } = req.body;
+    const {states, years, resolution} = req.body;
 
+    if (!states || !years || !resolution) {
+      return res.status(400).json({ 
+          error: 'Missing required parameters',
+          details: { states, years, resolution }
+      });
+  }
     const pythonProcess = spawn('python', [
       path.join(__dirname, '..', 'python-scripts', 'mapGenerator.py'),
       resolution,
-      year,
-      country,
-      state,
+      years.join(','),
+      states.join(','),
     ]);
   
     pythonProcess.stdout.on('data', (data) => {

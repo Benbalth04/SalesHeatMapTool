@@ -543,25 +543,50 @@ class VisualisationMap:
         output_html_path = os.path.join(os.getcwd(), 'src\\python-scripts\\generated_map.html')
         m.save(output_html_path)
         return output_html_path
+    
 
 if __name__ == "__main__":
+    if len(sys.argv) < 4:
+        print(json.dumps({"error": "Insufficient arguments"}))
+        sys.exit(1)
+
     resolution = sys.argv[1]
-    year = sys.argv[2]
-    country = sys.argv[3]
-    state = sys.argv[4]
+    years = sys.argv[2]
+    states = sys.argv[3]
 
     BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-    map = VisualisationMap(['South Australia', 'Western Australia', 'Northern Territory','New South Wales', 'Victoria', "Australian Capital Territory", 'Queensland'], resolution='StateElectorate')
-    sales_2023_path = os.path.join(BASE_PATH, 'data', 'sales2023.xlsx')
-    sales_2024_path = os.path.join(BASE_PATH, 'data', 'sales2024.xlsx')
+    try:
+        valid_resolutions = ['Postcode', 'StateElectorate', 'FederalElectorate']
+        if resolution not in valid_resolutions:
+            raise ValueError(f"Invalid resolution. Must be one of {valid_resolutions}")
 
-    # Read sales data from Excel files using the correct paths
-    sales_2023 = pd.read_excel(sales_2023_path)
-    sales_2024 = pd.read_excel(sales_2024_path)
+        years = years.split(',') if isinstance(years, str) else years
+        states = states.split(',') if isinstance(states, str) else states
 
-    merged_gdf = map.process_sales_data(sales_2023, sales_2024)
-    map_path = map.generate_map(merged_gdf)
-    output = json.dumps({"map_html_path": map_path})
+        map = VisualisationMap(states, resolution)
 
-    print(output)
+        sales_2023_path = os.path.join(BASE_PATH, 'data', 'sales2023.xlsx')
+        sales_2024_path = os.path.join(BASE_PATH, 'data', 'sales2024.xlsx')
+
+        sales_2023 = pd.read_excel(sales_2023_path)
+        sales_2024 = pd.read_excel(sales_2024_path)
+
+        merged_gdf = map.process_sales_data(sales_2023, sales_2024)
+        map_path = map.generate_map(merged_gdf)
+        output = json.dumps({"map_html_path": map_path})
+
+        print(output)
+
+    except Exception as e:
+        # Catch and print any errors
+        error_output = json.dumps({
+            "error": str(e),
+            "details": {
+                "resolution": resolution,
+                "years": years,
+                "states": states
+            }
+        })
+        print(error_output)
+        sys.exit(1)
