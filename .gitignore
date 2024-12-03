@@ -1,4 +1,7 @@
 .env
 node_modules/
 **/generarated_map.html 
-src/python-scripts/
+src/python-scripts/data
+src/python-scripts/FederalElectorates
+src/python-scripts/Postcodes
+src/python-scripts/StateElectorates
