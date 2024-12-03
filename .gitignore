@@ -1,6 +1,6 @@
 .env
 node_modules/
-**/generarated_map.html 
+**/generated_map.html 
 src/python-scripts/data
 src/python-scripts/FederalElectorates
 src/python-scripts/Postcodes
