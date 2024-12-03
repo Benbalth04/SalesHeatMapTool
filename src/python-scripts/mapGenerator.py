@@ -20,7 +20,7 @@ class VisualisationMap:
     Supports multiple resolution levels: Postcode, StateElectorate, or FederalElectorate.
     """
 
-    def __init__(self, includedStates: list[str], resolution: Literal['Postcode', 'StateElectorate', 'FederalElectorate']) -> None:
+    def __init__(self, includedStates: list[str], resolution: Literal['Postcode', 'StateElectorate', 'FederalElectorate', 'State', 'National']) -> None:
         """
         Initialize the visualization map with specified states and resolution.
         
@@ -130,49 +130,6 @@ class VisualisationMap:
         
         return electoral_gdf
 
-    def _load_spacial(self, includedStates: list[str], postcodeShapes, electoralShapes) -> Tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
-        """
-        Load and prepare spatial data with simplified geometries.
-        
-        Args:
-            includedStates: List of state names to include
-            postcodeShapes: ABS postcode shapefiles
-            electoralShapes: ABS Electorate state files (either federal or state)
-            resolution: resolution of the data
-            
-        Returns:
-            Tuple of (postcode_gdf, electoral_gdf) with simplified geometries
-        """
-        # Load the original files
-        postcode_gdf = gpd.read_file(postcodeShapes)
-        postcode_gdf['postcode'] = postcode_gdf['POA_CODE21'].astype(str).str.zfill(4)
-        electoral_gdf = gpd.read_file(electoralShapes)
-
-        # Project datasets to GDA2020 / MGA zone 55 (EPSG:7855)
-        postcode_gdf = postcode_gdf.to_crs('EPSG:7855')
-        electoral_gdf = electoral_gdf.to_crs('EPSG:7855')
-
-        # Filter for specified states before simplification to reduce processing
-        electoral_gdf = electoral_gdf[electoral_gdf['STE_NAME21'].isin(includedStates)]
-        
-        # Get the bounding box of electoral districts to filter postcodes
-        electoral_bounds = electoral_gdf.total_bounds
-        postcode_gdf = postcode_gdf[postcode_gdf.geometry.intersects(
-            gpd.GeoDataFrame(geometry=[box(*electoral_bounds)], crs=electoral_gdf.crs).geometry[0]
-        )]
-
-        # Simplify geometries
-        # The tolerance value determines how much simplification occurs
-        # Using 100 meters as tolerance which should maintain visual quality while reducing size
-        postcode_gdf.geometry = postcode_gdf.geometry.simplify(100, preserve_topology=True)
-        electoral_gdf.geometry = electoral_gdf.geometry.simplify(100, preserve_topology=True)
-        
-        # Remove any empty geometries that might have resulted from simplification
-        postcode_gdf = postcode_gdf[~postcode_gdf.geometry.is_empty]
-        electoral_gdf = electoral_gdf[~electoral_gdf.geometry.is_empty]
-        
-        return postcode_gdf, electoral_gdf
-
     def _create_color_map(self, column: str, data: gpd.GeoDataFrame, is_percentage: bool = False) -> cm.LinearColormap:
         """
         Create a color map for the choropleth visualization.
@@ -202,53 +159,7 @@ class VisualisationMap:
             caption = f'{column.replace("_", " ").title()} ($)'
         
         return cm.LinearColormap(colors=colors, vmin=vmin, vmax=vmax, caption=caption)
-    
-    def _create_geojson_layer(self, m: folium.Map, gdf: gpd.GeoDataFrame) -> None:
-        """Add a GeoJSON layer with tooltips to the map."""
-        style_function = lambda x: {
-            'fillColor': '#ffffff',
-            'color': '#000000',
-            'fillOpacity': 0.1,
-            'weight': 0.1
-        }
         
-        highlight_function = lambda x: {
-            'fillColor': '#000000',
-            'color': '#000000',
-            'fillOpacity': 0.50,
-            'weight': 0.1
-        }
-        
-        tooltip_fields = [
-            'SED_NAME24',
-            'STE_NAME21',
-            'sales_2023',
-            'sales_2024',
-            'sales_pct_change'
-        ]
-        
-        tooltip_aliases = [
-            'Electorate:',
-            'State:',
-            '2023 Sales ($):',
-            '2024 Sales ($):',
-            'Sales Change (%):'
-        ]
-        
-        folium.GeoJson(
-            gdf,
-            style_function=style_function,
-            control=False,
-            highlight_function=highlight_function,
-            tooltip=folium.GeoJsonTooltip(
-                fields=tooltip_fields,
-                aliases=tooltip_aliases,
-                style=("background-color: white; color: #333333; font-family: arial; "
-                       "font-size: 12px; padding: 10px;"),
-                localize=True
-            )
-        ).add_to(m)
-    
     def process_sales_data(self, sales_2023: pd.DataFrame, sales_2024: pd.DataFrame) -> gpd.GeoDataFrame:
         """Process and merge sales data with spatial data."""
         # Clean and prepare sales data for each year
@@ -557,7 +468,7 @@ if __name__ == "__main__":
     BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
     try:
-        valid_resolutions = ['Postcode', 'StateElectorate', 'FederalElectorate']
+        valid_resolutions = ['Postcode', 'StateElectorate', 'FederalElectorate', 'State','National']
         if resolution not in valid_resolutions:
             raise ValueError(f"Invalid resolution. Must be one of {valid_resolutions}")
 

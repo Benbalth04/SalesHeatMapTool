@@ -47,13 +47,43 @@
                     </div>
                 </div>
             </div>
-            <button id="generate-map-btn" disabled>Generate Map</button>
+            <div class="dropdown">
+                <div class="dropdown-toggle">Map Resolution</div>
+                <select class="dropdown-menu" id="resolution-dropdown">
+                    <option value="Postcode">Postcodes</option>
+                    <option value="StateElectorate">State Electorates</option>
+                    <option value="FederalElectorate">Federal Electorates</option>
+                    <option value="State">State</option>
+                    <option value="National">National</option>
+                </select>
+            </div>
+
+            <div class="button-container">
+                <button id="generate-map-btn" disabled>Generate Map</button>
+                <button id="download-btn" style = "display:none;">Download</button>
+                <div id="download-popup" class="popup-overlay" style="display: none;">
+                    <div class="popup-content">
+                        <h2>Download Map</h2>
+                        <p>Check the file size before downloading!</p>
+                        <p id="file-size"></p>
+                        <button id="start-download-btn">Start Download</button>
+                        <button id="close-popup-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
             <div id="map-container" class="map-container">
-                <!-- Rendered HTML map will load here -->
+                <div id="loading-overlay" class="loading-overlay">
+                    <div class="loading-content">
+                        <div class="spinner"></div>
+                        <p>Loading Map...</p>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
     <script src="../js/main.js"></script>
     <script src="../js/settings.js"></script>
+    <script src="https://unpkg.com/html-to-image@latest/dist/html-to-image.js"></script>
+    <script src="../js/download.js"></script>
 </body>
 </html>
