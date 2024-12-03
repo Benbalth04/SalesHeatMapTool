@@ -120,6 +120,68 @@
     gap: 20px;
 }
 
+#map-container {
+    width: 90%;
+    height: 600px;
+    background-color: #f6f6f7;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative; /* Required for absolute positioning of loading spinner */
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    visibility: hidden; /* Initially hidden */
+}
+
+/* Loading Content */
+.loading-content {
+    text-align: center;
+    color: #ffffff;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid #5c6ac4; /* Blue color */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-content p {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 10px;
+}
+
+/* Button Container */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* Space between buttons */
+    margin-top: 20px;
+}
+
+/* Generate Map Button */
 #generate-map-btn {
     padding: 12px 20px;
     font-size: 16px;
@@ -137,12 +199,117 @@
     cursor: not-allowed;
 }
 
-#map-container {
-    width: 90%;
-    height: 600px;
-    background-color: #f6f6f7;
-    border: 1px solid #dfe3e8;
-    border-radius: 8px;
-    overflow: hidden;
+/* Download Button */
+#download-btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #5c6ac4;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
+#download-btn:disabled {
+    background-color: #dfe3e8;
+    cursor: not-allowed;
+}
+
+/* Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Popup Content */
+.popup-content {
+    background-color: #ffffff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    width: 350px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.popup-content h2 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    color: #212b36;
+    font-weight: bold;
+}
+
+.popup-description {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.popup-options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.popup-options label {
+    font-size: 14px;
+    color: #212b36;
+    cursor: pointer;
+}
+
+.popup-options input {
+    margin-right: 8px;
+}
+
+.popup-file-size {
+    font-size: 14px;
+    color: #5c6ac4;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Popup Buttons */
+.popup-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.popup-buttons button {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #5c6ac4;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#start-download-btn {
+    background-color: #5c6ac4;
+    color: white;
+}
+
+#start-download-btn:hover {
+    background-color: #4759a1;
+}
+
+#close-popup-btn {
+    background-color: #dfe3e8;
+    color: #212b36;
+}
+
+#close-popup-btn:hover {
+    background-color: #c6c9cc;
+}

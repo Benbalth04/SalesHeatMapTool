@@ -1,16 +1,18 @@
 // Select elements
 const yearCheckboxes = document.querySelectorAll('#year-dropdown input[type="checkbox"]');
 const stateCheckboxes = document.querySelectorAll('#state-dropdown input[type="checkbox"]');
+const resolutionDropdown = document.getElementById('resolution-dropdown');
 const generateMapBtn = document.getElementById('generate-map-btn');
-const mapContainer = document.getElementById('map-container');
 
 // Function to check selections
 function checkSelections() {
     const selectedStates = Array.from(stateCheckboxes).filter(checkbox => checkbox.checked).length;
     const selectedYears = Array.from(yearCheckboxes).filter(checkbox => checkbox.checked).length;
 
+    const resolutionSelected = resolutionDropdown.value;
+
     // Enable/Disable the button
-    if (selectedStates > 0 && selectedYears > 0) {
+    if (selectedStates > 0 && selectedYears > 0 && resolutionSelected) {
         generateMapBtn.disabled = false;
     } else {
         generateMapBtn.disabled = true;
@@ -18,9 +20,10 @@ function checkSelections() {
 }
 
 // Add event listeners to all checkboxes
-[...yearCheckboxes, ...stateCheckboxes].forEach(checkbox => {
-    checkbox.addEventListener('change', checkSelections);
-});
+yearCheckboxes.forEach(checkbox => checkbox.addEventListener('change', checkSelections));
+stateCheckboxes.forEach(checkbox => checkbox.addEventListener('change', checkSelections));
+resolutionDropdown.addEventListener('change', checkSelections);
+
 
 // Generate map button event listener
 generateMapBtn.addEventListener('click', async () => {
@@ -32,13 +35,15 @@ generateMapBtn.addEventListener('click', async () => {
         .filter(checkbox => checkbox.checked)
         .map(checkbox => checkbox.value);
 
-    const resolution = 'StateElectorate'
+    const resolution = resolutionDropdown.value;
 
     const payload = {
         states: selectedStates,
         years: selectedYears,
         resolution: resolution
     };
+
+    showLoading()
 
     try {
         const response = await fetch('/api/generate-map', {
@@ -67,6 +72,7 @@ generateMapBtn.addEventListener('click', async () => {
         mapContainer.appendChild(iframe);
 
     } catch (error) {
+        hideLoading()
         console.error('Map generation error:', error);
         mapContainer.innerHTML = `<p>An error occurred: ${error.message}</p>`;
     }
@@ -91,3 +97,13 @@ document.addEventListener('click', (event) => {
         }
     });
 });
+
+// Show loading overlay
+function showLoading() {
+    document.getElementById("loading-overlay").style.visibility = "visible";
+}
+
+// Hide loading overlay
+function hideLoading() {
+    document.getElementById("loading-overlay").style.visibility = "hidden";
+}
