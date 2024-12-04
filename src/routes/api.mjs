@@ -29,7 +29,7 @@ router.post('/generate-map', (req, res) => {
       });
   }
     const pythonProcess = spawn('python', [
-      path.join(__dirname, '..', 'python-scripts', 'mapGenerator.py'),
+      path.join(__dirname, '..', 'python', 'mapGenerator.py'),
       resolution,
       years.join(','),
       states.join(','),

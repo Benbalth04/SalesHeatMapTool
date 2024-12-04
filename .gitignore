@@ -1,7 +1,7 @@
 .env
 node_modules/
 **/generated_map.html 
-src/python-scripts/data
-src/python-scripts/Australia-shapefiles
-src/python-scripts/international-shapefiles
-src/python-scripts/USA-shapefiles
+src/python/data
+src/python/Australia-shapefiles
+src/python/international-shapefiles
+src/python/USA-shapefiles
