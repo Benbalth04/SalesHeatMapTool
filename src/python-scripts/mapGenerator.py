@@ -20,7 +20,7 @@ class VisualisationMap:
     Supports multiple resolution levels: Postcode, StateElectorate, or FederalElectorate.
     """
 
-    def __init__(self, includedStates: list[str], resolution: Literal['Postcode', 'StateElectorate', 'FederalElectorate', 'State', 'National']) -> None:
+    def __init__(self, includedStates: list[str], resolution: Literal['Postcode', 'StateElectorate', 'FederalElectorate', 'State']) -> None:
         """
         Initialize the visualization map with specified states and resolution.
         
@@ -33,7 +33,7 @@ class VisualisationMap:
 
         self.BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-        self.POSTCODE_SHAPEFILE = os.path.join(self.BASE_PATH, 'Postcodes', 'POA_2021_AUST_GDA94.shp')
+        self.POSTCODE_SHAPEFILE = os.path.join(self.BASE_PATH, 'Australia-shapefiles\\Postcodes', 'POA_2021_AUST_GDA94.shp')
         self.SHAPEFILE_CONFIGS = {
             'Postcode': {
                 'path': self.POSTCODE_SHAPEFILE,
@@ -42,28 +42,34 @@ class VisualisationMap:
                 'state_column': 'STE_NAME21'
             },
             'StateElectorate': {
-                'path': os.path.join(self.BASE_PATH, 'StateElectorates', 'SED_2024_AUST_GDA2020.shp'),
+                'path': os.path.join(self.BASE_PATH, 'Australia-shapefiles\\StateElectorates', 'SED_2024_AUST_GDA2020.shp'),
                 'id_column': 'SED_CODE24',
                 'name_column': 'SED_NAME24',
                 'state_column': 'STE_NAME21'
             },
             'FederalElectorate': {
-                'path': os.path.join(self.BASE_PATH, 'FederalElectorates', 'CED_2021_AUST_GDA2020.shp'),
+                'path': os.path.join(self.BASE_PATH, 'Australia-shapefiles\\FederalElectorates', 'CED_2021_AUST_GDA2020.shp'),
                 'id_column': 'CED_CODE21',
                 'name_column': 'CED_NAME21',
                 'state_column': 'STE_NAME21'
+            },
+            'State': {
+                'path': os.path.join(self.BASE_PATH, 'Australia-shapefiles\\States', 'STE_2021_AUST_GDA2020.shp'),
+                'id_column': 'STE_CODE21',
+                'name_column': 'STE_NAME21',
             }
         }
         
         self.config = self.SHAPEFILE_CONFIGS[resolution]
-        # Always load postcode data as it's needed for sales mapping
         self.postcode_gdf = self._load_postcode_data(includedStates)
         
         # Load electoral data if needed
-        if resolution != 'Postcode':
-            self.electoral_gdf = self._load_electoral_data(includedStates)
+        if resolution in ['StateElectorate', 'FederalElectorate']:
+            self.resolution_gdf = self._load_electoral_data(includedStates)
+        elif resolution == 'State':
+            self.resolution_gdf = self._load_state_data(includedStates)
         else:
-            self.electoral_gdf = None
+            self.resolution_gdf = None
 
     def _load_postcode_data(self, includedStates: list[str]) -> gpd.GeoDataFrame:
         """Load and prepare postcode spatial data."""
@@ -117,8 +123,6 @@ class VisualisationMap:
     def _load_electoral_data(self, includedStates: list[str]) -> gpd.GeoDataFrame:
         """Load and prepare electoral district spatial data."""
         electoral_gdf = gpd.read_file(self.config['path'])
-        
-        # Project to GDA2020
         electoral_gdf = electoral_gdf.to_crs('EPSG:7855')
         
         # Filter for specified states
@@ -129,6 +133,14 @@ class VisualisationMap:
         electoral_gdf = electoral_gdf[~electoral_gdf.geometry.is_empty]
         
         return electoral_gdf
+
+    def _load_state_data(self, includedStates: list[str]) -> gpd.GeoDataFrame:
+        state_gdf = gpd.read_file(self.config['path'])
+        state_gdf = state_gdf.to_crs('EPSG:7855')
+        state_gdf = state_gdf[state_gdf[self.config['name_column']].isin(includedStates)]
+        state_gdf.geometry = state_gdf.geometry.simplify(100, preserve_topology=True)
+        state_gdf = state_gdf[~state_gdf.geometry.is_empty]
+        return state_gdf
 
     def _create_color_map(self, column: str, data: gpd.GeoDataFrame, is_percentage: bool = False) -> cm.LinearColormap:
         """
@@ -186,14 +198,14 @@ class VisualisationMap:
             # Direct merge for postcode resolution
             merged_gdf = self.postcode_gdf.merge(merged_sales, on='postcode', how='left')
         else:
-            # Spatial joining for electoral districts
+            # Spatial joining for resolution
             # First merge sales data with postcode geometries
             postcode_sales_gdf = self.postcode_gdf.merge(merged_sales, on='postcode', how='left')
             
-            # Filter postcodes to electoral bounds
-            electoral_bounds = self.electoral_gdf.total_bounds
+            # Filter postcodes to resolution bounds
+            resolution_bounds = self.resolution_gdf.total_bounds
             postcode_sales_gdf = postcode_sales_gdf[postcode_sales_gdf.geometry.intersects(
-                gpd.GeoDataFrame(geometry=[box(*electoral_bounds)], crs=self.electoral_gdf.crs).geometry[0]
+                gpd.GeoDataFrame(geometry=[box(*resolution_bounds)], crs=self.resolution_gdf.crs).geometry[0]
             )]
             
             # Create centroids for spatial join
@@ -201,15 +213,15 @@ class VisualisationMap:
             postcode_sales_centroids = gpd.GeoDataFrame(postcode_sales_gdf, geometry='centroid')
             
             # Perform spatial join
-            electorate_data = gpd.sjoin(
+            resolution_data = gpd.sjoin(
                 postcode_sales_centroids, 
-                self.electoral_gdf, 
+                self.resolution_gdf, 
                 how='left', 
                 predicate='within'
             )
             
-            # Group by electoral district and aggregate
-            merged_gdf = electorate_data.groupby(self.config['name_column']).agg({
+            # Group by resolution and aggregate
+            merged_gdf = resolution_data.groupby(self.config['name_column']).agg({
                 'sales_2023': 'sum',
                 'sales_2024': 'sum',
                 'sales_weight': 'sum',
@@ -217,7 +229,7 @@ class VisualisationMap:
             }).reset_index()
             
             # Merge back with electoral geometries
-            merged_gdf = self.electoral_gdf.merge(
+            merged_gdf = self.resolution_gdf.merge(
                 merged_gdf, 
                 on=self.config['name_column'], 
                 how='left'
@@ -307,7 +319,7 @@ class VisualisationMap:
                 'Change (%):',
                 'Weighted Change (%):'
             ]
-        else:
+        elif self.resolution in ['StateElectorate', 'FederalElectorate']:
             tooltip_fields = [
                 self.config['name_column'],
                 self.config['state_column'],
@@ -319,6 +331,36 @@ class VisualisationMap:
             tooltip_aliases = [
                 'Electorate:',
                 'State:',
+                '2023 Sales ($):',
+                '2024 Sales ($):',
+                'Change (%):',
+                'Weighted Change (%):'
+            ]
+        elif self.resolution == 'State':
+            tooltip_fields = [
+                self.config['name_column'],
+                'sales_2023',
+                'sales_2024',
+                'sales_pct_change',
+                'normalized_weighted_pct_change'
+            ]
+            tooltip_aliases = [
+                'State:',
+                '2023 Sales ($):',
+                '2024 Sales ($):',
+                'Change (%):',
+                'Weighted Change (%):'
+            ]
+        elif self.resolution == 'National':
+            tooltip_fields = [
+                self.config['name_column'],
+                'sales_2023',
+                'sales_2024',
+                'sales_pct_change',
+                'normalized_weighted_pct_change'
+            ]
+            tooltip_aliases = [
+                'Country:',
                 '2023 Sales ($):',
                 '2024 Sales ($):',
                 'Change (%):',
@@ -455,7 +497,6 @@ class VisualisationMap:
         m.save(output_html_path)
         return output_html_path
     
-
 if __name__ == "__main__":
     if len(sys.argv) < 4:
         print(json.dumps({"error": "Insufficient arguments"}))

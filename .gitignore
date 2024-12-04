@@ -2,6 +2,6 @@
 node_modules/
 **/generated_map.html 
 src/python-scripts/data
-src/python-scripts/FederalElectorates
-src/python-scripts/Postcodes
-src/python-scripts/StateElectorates
+src/python-scripts/Australia-shapefiles
+src/python-scripts/international-shapefiles
+src/python-scripts/USA-shapefiles
