@@ -66,6 +66,26 @@ router.post('/generate-map', (req, res) => {
         res.status(500).json({ error: `Python process exited with code ${code}` });
       }
     });
+});
+
+router.delete('/reset-maps', (req, res) => {
+  const filePath = path.join(publicDirectory, 'maps', 'generated_map.html');
+  fs.unlink(filePath, (err) => {
+      if (err) {
+          if (err.code === 'ENOENT') {
+              // File does not exist
+              console.err(err)
+              return res.status(404).json({ error: 'File not found', filePath: filePath});
+          }
+          // Other errors
+          console.error(err);
+          return res.status(500).json({ error: 'Failed to delete file' });
+      }
+
+      // File successfully deleted
+      console.log('File deleted successfully');
+      res.status(200).json({ message: 'File deleted successfully' });
   });
+});
 
 export default router;
