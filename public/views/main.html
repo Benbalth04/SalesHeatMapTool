@@ -23,7 +23,7 @@
             </div>
         </header>
         <main class="content">
-            <div class="dropdowns-container">
+            <div class="dropdowns-container" id ="dropdowns-container">
                 <div class="dropdown" id="state-dropdown-container">
                     <div class="dropdown-toggle">States</div>
                     <div class="dropdown-menu" id = 'state-dropdown'>
@@ -47,15 +47,18 @@
                     </div>
                 </div>
             </div>
-            <div class="dropdown">
-                <div class="dropdown-toggle">Map Resolution</div>
-                <select class="dropdown-menu" id="resolution-dropdown">
-                    <option value="Postcode">Postcodes</option>
-                    <option value="StateElectorate">State Electorates</option>
-                    <option value="FederalElectorate">Federal Electorates</option>
-                    <option value="State">State</option>
-                    <option value="National">National</option>
-                </select>
+            <div class="dropdowns-container" id ="resolution-container">
+                <div class="dropdown">
+                    <div class="dropdown-toggle">Map Resolution</div>
+                    <select class="dropdown-menu" id="resolution-dropdown">
+                        <option value=''>Select a resolution</option> <!-- Default empty option -->
+                        <option value="Postcode">Postcodes</option>
+                        <option value="StateElectorate">State Electorates</option>
+                        <option value="FederalElectorate">Federal Electorates</option>
+                        <option value="State">State</option>
+                        <option value="National">National</option>
+                    </select>
+                </div>
             </div>
 
             <div class="button-container">
@@ -75,7 +78,6 @@
                 <div id="loading-overlay" class="loading-overlay">
                     <div class="loading-content">
                         <div class="spinner"></div>
-                        <p>Loading Map...</p>
                     </div>
                 </div>
             </div>

@@ -6,6 +6,8 @@ MapAlytics/
 │   │   └── index.js                  
 │   ├── icons/                        
 │   │   └── Store all icon files here
+│   ├── maps/                        
+│   │   └── generated_map.html
 │   ├── index.html                    
 │   └── views/                       
 │       └── 

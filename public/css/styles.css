@@ -49,6 +49,10 @@
     margin: 20px 0;
 }
 
+.dropdowns-container.hidden {
+    display: none; /* Hides the dropdown container */
+}
+
 .dropdown {
     position: relative;
     width: 300px;
@@ -197,6 +201,16 @@
 #generate-map-btn:disabled {
     background-color: #dfe3e8;
     cursor: not-allowed;
+}
+
+#generate-map-btn.reset {
+    background-color: #d9534f; /* Red background to signify reset */
+    color: white;
+    transition: background-color 0.2s ease;
+}
+
+#generate-map-btn.reset:hover {
+    background-color: #c9302c;
 }
 
 /* Download Button */
