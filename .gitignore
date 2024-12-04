@@ -2,6 +2,6 @@
 node_modules/
 **/generated_map.html 
 src/python/data
-src/python/Australia-shapefiles
-src/python/international-shapefiles
-src/python/USA-shapefiles
+src/python/shapefiles/Australia
+src/python/shapefiles/international
+src/python/shapefiles/USA

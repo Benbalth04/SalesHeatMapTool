@@ -33,7 +33,7 @@ class VisualisationMap:
 
         self.BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-        self.POSTCODE_SHAPEFILE = os.path.join(self.BASE_PATH, 'Australia-shapefiles\\Postcodes', 'POA_2021_AUST_GDA94.shp')
+        self.POSTCODE_SHAPEFILE = os.path.join(self.BASE_PATH, 'shapefiles\\Australia-shapefiles\\Postcodes', 'POA_2021_AUST_GDA94.shp')
         self.SHAPEFILE_CONFIGS = {
             'Postcode': {
                 'path': self.POSTCODE_SHAPEFILE,
@@ -42,19 +42,19 @@ class VisualisationMap:
                 'state_column': 'STE_NAME21'
             },
             'StateElectorate': {
-                'path': os.path.join(self.BASE_PATH, 'Australia-shapefiles\\StateElectorates', 'SED_2024_AUST_GDA2020.shp'),
+                'path': os.path.join(self.BASE_PATH, 'shapefiles\\Australia-shapefiles\\StateElectorates', 'SED_2024_AUST_GDA2020.shp'),
                 'id_column': 'SED_CODE24',
                 'name_column': 'SED_NAME24',
                 'state_column': 'STE_NAME21'
             },
             'FederalElectorate': {
-                'path': os.path.join(self.BASE_PATH, 'Australia-shapefiles\\FederalElectorates', 'CED_2021_AUST_GDA2020.shp'),
+                'path': os.path.join(self.BASE_PATH, 'shapefiles\\Australia-shapefiles\\FederalElectorates', 'CED_2021_AUST_GDA2020.shp'),
                 'id_column': 'CED_CODE21',
                 'name_column': 'CED_NAME21',
                 'state_column': 'STE_NAME21'
             },
             'State': {
-                'path': os.path.join(self.BASE_PATH, 'Australia-shapefiles\\States', 'STE_2021_AUST_GDA2020.shp'),
+                'path': os.path.join(self.BASE_PATH, 'shapefiles\\Australia-shapefiles\\States', 'STE_2021_AUST_GDA2020.shp'),
                 'id_column': 'STE_CODE21',
                 'name_column': 'STE_NAME21',
             }
