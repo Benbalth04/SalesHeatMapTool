@@ -1,3 +1,5 @@
+### Begin testing seperate python files, and get it to work like current map generator file
+
 - Create seperate python scripts for:
     1) Reading sales data (just one big file)
     2) Parsing geoson data
