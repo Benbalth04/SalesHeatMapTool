@@ -12,6 +12,8 @@ def generate_choropleth_geojson(
     start_date: pd.Timestamp,
     end_date: pd.Timestamp,
     included_states: list[str],
+    time_resolution: str, 
+    time_length: int,
 ) -> gpd.GeoDataFrame:
     """ 
     Generates a GeoJSON for a choropleth map based on sales data and a shapefile.
@@ -24,13 +26,15 @@ def generate_choropleth_geojson(
         start_date (pd.Timestamp): Start date for sales data aggregation.
         end_date (pd.Timestamp): End date for sales data aggregation.
         included_states (list[str]): List of states to include in the shapefile and sales analysis.
+        time_resolution(str): The resolution of time used for analysis. Can be one of Month, Quarter or Year.
+        time_lenght(int): The number of resolution period (e.g. 5 paired with Month resolution implies 5 months of historical data)
 
     Returns:
         dict: A GeoJSON dictionary suitable for a Leaflet.js choropleth layer.
     """
     # Process the sales data
     sales_df = process_sales(sales_data_filepath, start_date, end_date)
-    
+
     # Process the necessary shapefiles
     shapefile_gdf = national_shapefile_parser(
         country=shapefile_country,
@@ -40,20 +44,34 @@ def generate_choropleth_geojson(
     )
 
     id_column = shapefile_config[shapefile_resolution]['id_column']
+
     # Merge sales data with shapefile GeoDataFrame
     shapefile_gdf[id_column] = shapefile_gdf[id_column].astype(str)
-    sales_df.index = sales_df.index.astype(str)
+    sales_df['zip'] = sales_df['zip'].astype(str)  # Ensure 'zip' matches the format of the id_column in shapefile
+    sales_df_columns = [col.strftime('%b-%Y') if isinstance(col, pd.Timestamp) else col for col in sales_df.columns]
+
+    sales_df.columns = sales_df_columns
     
     merged_gdf = shapefile_gdf.merge(
-        sales_df[['total_sales']],
+        sales_df,
         how='left',
-        left_on=shapefile_gdf[id_column].astype(str),
-        right_index=True
+        left_on=shapefile_gdf[id_column],
+        right_on='zip'
     )
+    
+    # Fill missing sales values with 0 for non-geometry columns
+    non_geometry_columns = [col for col in merged_gdf.columns if col != 'geometry']
+    merged_gdf[non_geometry_columns] = merged_gdf[non_geometry_columns].fillna(0)
 
-    # Fill missing sales with 0
-    merged_gdf['total_sales'] = merged_gdf['total_sales'].fillna(0)
+    # Ensure missing geometry values are set to None
+    merged_gdf['geometry'] = merged_gdf['geometry'].fillna(None)
 
+    # Reorder columns: postcode, province, country, geometry, total sales, monthly sales
+    columns_order = (
+        ['zip', 'province', 'country', 'geometry', 'total_sales'] +
+        [col for col in sales_df_columns if col not in ['zip', 'province', 'country', 'total_sales']]
+    )
+    merged_gdf = merged_gdf[columns_order]
     return merged_gdf
 
     # Convert to GeoJSON

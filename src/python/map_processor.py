@@ -95,7 +95,7 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
     # Setup tooltip fields based on resolution
     if shapefile_resolution == 'Postcode':
         tooltip_fields = [
-            'postcode',
+            'zip',
             'total_sales'
         ]
         tooltip_aliases = [
@@ -223,6 +223,29 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
     m.save(output_html_path)
     return output_html_path
 
+def validate_inputs(resolution: str, states: list[str], timeResolution: str, timeLength: int, startTime, endTime):
+    valid_resolutions = ['Postcode', 'StateElectorate', 'FederalElectorate', 'State','National']
+    if resolution not in valid_resolutions:
+        raise ValueError(f"Invalid resolution. Must be one of {valid_resolutions}")
+    
+    valid_states = ["New South Wales", "Victoria", "Queensland", "Australian Capital Territory", 
+                    "Western Australia", "South Australia", "Tasmania", "Western Austrlia", "Northern Territory"]
+    
+    for state in states: 
+        if state not in valid_states:
+            raise ValueError(f"Invalid state ({state}). Must be one of {valid_states}")
+        
+    valid_time_resolutions = {"Month":6, "Quarter":8, "Year":5}
+    if valid_time_resolutions[time_resolution] is None:
+        raise ValueError(f"Invalid time resolution ({timeResolution}). Must be one of {valid_time_resolutions}")
+    
+    if timeLength > valid_time_resolutions[time_resolution]:
+        raise ValueError(f"Invalid time length for the selected time resolutiom. Time length must be less than {valid_time_resolutions[resolution] + 1}")
+    
+    if endTime <= startTime:
+        raise ValueError(f"Invalid start and end times. Start time must be before end time")
+
+
 if __name__ == "__main__":
     current_path = os.path.dirname(os.path.abspath(__file__))
     country = 'Australia' 
@@ -230,16 +253,23 @@ if __name__ == "__main__":
     included_states = ["Queensland", "Victoria", "New South Wales"]
     config_path = os.path.join(current_path, f'shapefiles\\{country}', 'config.py')
     config = load_config(config_path)
+    time_resolution = "Month"
+    time_length = 6
+    start_date = pd.Timestamp(year=2022, month=1, day=1)
+    end_date = pd.Timestamp(year=2023, month=12, day=31)
 
+    validate_inputs(resolution, included_states, time_resolution, time_length, start_date, end_date)
 
     geoJSON = generate_choropleth_geojson(
         sales_data_filepath = os.path.join(current_path, 'data', 'sales.xlsx'),
         shapefile_country = country,
         shapefile_resolution = resolution,
         shapefile_config = config,
-        start_date = pd.Timestamp(year=2022, month=1, day=1), 
-        end_date = pd.Timestamp(year=2023, month=12, day=31), 
-        included_states = included_states
+        start_date = start_date, 
+        end_date = end_date, 
+        included_states = included_states,
+        time_resolution=time_resolution, 
+        time_length = time_length
     )
 
     map_path = generate_map(resolution, geoJSON)

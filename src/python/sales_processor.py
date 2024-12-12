@@ -10,7 +10,7 @@ def process_sales(data_filepath: str, start_date: date, end_date: date) -> pd.Da
 
     Parameters:
         - data_filepath: A file path to an Excel file of transactions. The Excel file must have the headers: 
-          'date', 'postcode', 'transaction value'.
+          'created_at', 'zip', 'province', 'country', 'total_price'.
         - start_date: A date object representing the start of the analysis period (inclusive).
         - end_date: A date object representing the end of the analysis period (inclusive).
 
@@ -46,7 +46,7 @@ def process_sales(data_filepath: str, start_date: date, end_date: date) -> pd.Da
         raise ValueError("No transactions found in the specified date range.")
 
     filtered_transactions['month'] = filtered_transactions['created_at'].dt.to_period('M')
-    grouped = filtered_transactions.groupby(['zip', 'month'])['total_price'].sum()
+    grouped = filtered_transactions.groupby(['zip', 'province', 'country', 'month'])['total_price'].sum()
     sales_by_postcode = grouped.unstack(fill_value=0)
 
     sales_by_postcode.columns = sales_by_postcode.columns.to_timestamp()
@@ -54,4 +54,4 @@ def process_sales(data_filepath: str, start_date: date, end_date: date) -> pd.Da
 
     sales_by_postcode['total_sales'] = sales_by_postcode.sum(axis=1)
 
-    return sales_by_postcode
+    return sales_by_postcode.reset_index()
