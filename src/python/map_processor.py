@@ -164,7 +164,7 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
     # Add GeoJSON layers with custom styling
     folium.GeoJson(
         merged_gdf,
-        name='Sales',
+        name='Total Sales',
         style_function=style_function,
         zoom_on_click=True
     ).add_to(fg)
@@ -241,8 +241,6 @@ if __name__ == "__main__":
         end_date = pd.Timestamp(year=2023, month=12, day=31), 
         included_states = included_states
     )
-
-    # print(geoJSON[geoJSON['postcode'] == '4179'])
 
     map_path = generate_map(resolution, geoJSON)
     output = json.dumps({"map_html_path": map_path})

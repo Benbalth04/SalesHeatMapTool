@@ -1,7 +1,10 @@
 .env
 node_modules/
 **/generated_map.html 
-src/python/data
+src/python/data/sales.xlsx
+src/python/data/sales2023.xlsx
+src/python/data/sales2024.xlsx
+
 src/python/shapefiles/Australia/FederalElectorates
 src/python/shapefiles/Australia/National
 src/python/shapefiles/Australia/StateElectorates

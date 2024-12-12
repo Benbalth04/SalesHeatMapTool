@@ -28,25 +28,25 @@ def process_sales(data_filepath: str, start_date: date, end_date: date) -> pd.Da
         raise ValueError("The 'start_date' must not be later than the 'end_date'.")
 
     try:
-        transactions = pd.read_excel(data_filepath, parse_dates=['date'])
-        transactions['date'] = pd.to_datetime(transactions['date'], format='mixed')
+        transactions = pd.read_excel(data_filepath, parse_dates=['created_at'])
+        transactions['created_at'] = pd.to_datetime(transactions['created_at'], format='mixed')
 
     except Exception as e:
         raise ValueError(f"Error reading Excel file: {e}")
 
-    required_columns = {'date', 'postcode', 'transaction value'}
+    required_columns = {'created_at', 'zip', 'province', 'country', 'total_price'}
     missing_columns = required_columns - set(transactions.columns)
     if missing_columns:
         raise ValueError(f"The Excel file is missing required columns: {missing_columns}. Expected columns are: {required_columns}.")
 
-    mask = (transactions['date'] >= pd.Timestamp(start_date)) & (transactions['date'] <= pd.Timestamp(end_date))
+    mask = (transactions['created_at'] >= pd.Timestamp(start_date)) & (transactions['created_at'] <= pd.Timestamp(end_date))
     filtered_transactions = transactions[mask]
     
     if filtered_transactions.empty:
         raise ValueError("No transactions found in the specified date range.")
 
-    filtered_transactions['month'] = filtered_transactions['date'].dt.to_period('M')
-    grouped = filtered_transactions.groupby(['postcode', 'month'])['transaction value'].sum()
+    filtered_transactions['month'] = filtered_transactions['created_at'].dt.to_period('M')
+    grouped = filtered_transactions.groupby(['zip', 'month'])['total_price'].sum()
     sales_by_postcode = grouped.unstack(fill_value=0)
 
     sales_by_postcode.columns = sales_by_postcode.columns.to_timestamp()
