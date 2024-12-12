@@ -29,6 +29,8 @@ def process_sales(data_filepath: str, start_date: date, end_date: date) -> pd.Da
 
     try:
         transactions = pd.read_excel(data_filepath, parse_dates=['date'])
+        transactions['date'] = pd.to_datetime(transactions['date'], format='mixed')
+
     except Exception as e:
         raise ValueError(f"Error reading Excel file: {e}")
 
@@ -49,5 +51,7 @@ def process_sales(data_filepath: str, start_date: date, end_date: date) -> pd.Da
 
     sales_by_postcode.columns = sales_by_postcode.columns.to_timestamp()
     sales_by_postcode = sales_by_postcode.loc[:, start_date:end_date]
+
+    sales_by_postcode['total_sales'] = sales_by_postcode.sum(axis=1)
 
     return sales_by_postcode

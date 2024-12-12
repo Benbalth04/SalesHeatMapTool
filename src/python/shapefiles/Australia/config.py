@@ -2,7 +2,7 @@ import os
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
-AUSTRALIA_CONFIGS = {
+CONFIG = {
     'Postcode': {
         'path': os.path.join(BASE_PATH, 'Postcodes', 'POA_2021_AUST_GDA94.shp'),
         'id_column': 'POA_CODE21',

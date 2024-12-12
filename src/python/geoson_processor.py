@@ -12,8 +12,7 @@ def generate_choropleth_geojson(
     start_date: pd.Timestamp,
     end_date: pd.Timestamp,
     included_states: list[str],
-    geo_id_column: str,
-) -> dict:
+) -> gpd.GeoDataFrame:
     """ 
     Generates a GeoJSON for a choropleth map based on sales data and a shapefile.
 
@@ -25,20 +24,14 @@ def generate_choropleth_geojson(
         start_date (pd.Timestamp): Start date for sales data aggregation.
         end_date (pd.Timestamp): End date for sales data aggregation.
         included_states (list[str]): List of states to include in the shapefile and sales analysis.
-        geo_id_column (str): Column in the shapefile to match with sales data (e.g., 'postcode').
 
     Returns:
         dict: A GeoJSON dictionary suitable for a Leaflet.js choropleth layer.
     """
-    if not geo_id_column or not isinstance(geo_id_column, str):
-        raise ValueError("geo_id_column must be a valid string representing a column in the shapefile.")
-
     # Process the sales data
     sales_df = process_sales(sales_data_filepath, start_date, end_date)
     
-    # Sum sales across all months in the range
-    sales_df['total_sales'] = sales_df.sum(axis=1)
-
+    # Process the necessary shapefiles
     shapefile_gdf = national_shapefile_parser(
         country=shapefile_country,
         resolution=shapefile_resolution,
@@ -46,22 +39,22 @@ def generate_choropleth_geojson(
         included_states=included_states
     )
 
+    id_column = shapefile_config[shapefile_resolution]['id_column']
     # Merge sales data with shapefile GeoDataFrame
-    if geo_id_column not in shapefile_gdf.columns:
-        raise KeyError(f"'{geo_id_column}' column not found in the shapefile GeoDataFrame.")
-    
-    shapefile_gdf[geo_id_column] = shapefile_gdf[geo_id_column].astype(str)
+    shapefile_gdf[id_column] = shapefile_gdf[id_column].astype(str)
     sales_df.index = sales_df.index.astype(str)
     
     merged_gdf = shapefile_gdf.merge(
         sales_df[['total_sales']],
         how='left',
-        left_on=geo_id_column,
+        left_on=shapefile_gdf[id_column].astype(str),
         right_index=True
     )
 
     # Fill missing sales with 0
     merged_gdf['total_sales'] = merged_gdf['total_sales'].fillna(0)
+
+    return merged_gdf
 
     # Convert to GeoJSON
     try:

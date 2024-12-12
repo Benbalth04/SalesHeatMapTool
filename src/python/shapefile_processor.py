@@ -46,15 +46,6 @@ def national_shapefile_parser(country: str, resolution: str, config: dict, inclu
     except Exception as e:
         raise ValueError(f"Failed to project GeoDataFrame to GDA2020 (EPSG:7855): {e}")
 
-    # Apply filtering for specific states if provided
-    if included_states:
-        state_column = resolution_config.get('state_column')
-        if not state_column:
-            raise KeyError(f"State filtering is not supported for the '{resolution}' resolution (no 'state_column' in config).")
-        if state_column not in gdf.columns:
-            raise ValueError(f"'{state_column}' column not found in shapefile for state filtering.")
-        gdf = gdf[gdf[state_column].isin(included_states)]
-
     # Special handling for 'Postcode' resolution (range-based filtering)
     if resolution == 'Postcode' and included_states:
         postcode_ranges = config.get('postcode_ranges', {})
@@ -77,6 +68,15 @@ def national_shapefile_parser(country: str, resolution: str, config: dict, inclu
             state_mask = gdf['postcode'].apply(lambda x: is_in_state_ranges(x, ranges))
             mask |= state_mask
         gdf = gdf[mask]
+
+    # Apply filtering for specific states if provided
+    elif included_states:
+        state_column = resolution_config.get('state_column')
+        if not state_column:
+            raise KeyError(f"State filtering is not supported for the '{resolution}' resolution (no 'state_column' in config).")
+        if state_column not in gdf.columns:
+            raise ValueError(f"'{state_column}' column not found in shapefile for state filtering.")
+        gdf = gdf[gdf[state_column].isin(included_states)]
 
     # Simplify geometries
     try:

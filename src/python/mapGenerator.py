@@ -493,7 +493,7 @@ class VisualisationMap:
         ).add_to(m)
 
         # Save the map
-        output_html_path = os.path.join(os.getcwd(), 'src\\python-scripts\\generated_map.html')
+        output_html_path = os.path.join(os.getcwd(), 'src\\python\\generated_map.html')
         m.save(output_html_path)
         return output_html_path
     
