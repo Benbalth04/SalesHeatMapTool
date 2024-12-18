@@ -46,18 +46,36 @@ def generate_choropleth_geojson(
     id_column = shapefile_config[shapefile_resolution]['id_column']
 
     # Merge sales data with shapefile GeoDataFrame
-    shapefile_gdf[id_column] = shapefile_gdf[id_column].astype(str)
-    sales_df['zip'] = sales_df['zip'].astype(str)  # Ensure 'zip' matches the format of the id_column in shapefile
-    sales_df_columns = [col.strftime('%b-%Y') if isinstance(col, pd.Timestamp) else col for col in sales_df.columns]
+    if shapefile_resolution == "Postcode":
+        shapefile_gdf[id_column] = shapefile_gdf[id_column].astype(str)
+        sales_df['zip'] = sales_df['zip'].astype(str)
+        sales_df_columns = [col.strftime('%b-%Y') if isinstance(col, pd.Timestamp) else col for col in sales_df.columns]
 
-    sales_df.columns = sales_df_columns
+        sales_df.columns = sales_df_columns
     
-    merged_gdf = shapefile_gdf.merge(
-        sales_df,
-        how='left',
-        left_on=shapefile_gdf[id_column],
-        right_on='zip'
-    )
+        merged_gdf = shapefile_gdf.merge(
+            sales_df,
+            how='left',
+            left_on=shapefile_gdf[id_column],
+            right_on='zip'
+        )
+
+    elif shapefile_resolution == "State":
+        shapefile_gdf[id_column] = shapefile_gdf[id_column].astype(str)
+        sales_df['province'] = sales_df['province'].astype(str)
+        sales_df_columns = [col.strftime('%b-%Y') if isinstance(col, pd.Timestamp) else col for col in sales_df.columns]
+
+        print(shapefile_gdf.head)
+        return
+
+        sales_df.columns = sales_df_columns
+            
+        merged_gdf = shapefile_gdf.merge(
+            sales_df,
+            how='left',
+            left_on=shapefile_gdf[id_column],
+            right_on='province'
+        )
     
     # Fill missing sales values with 0 for non-geometry columns
     non_geometry_columns = [col for col in merged_gdf.columns if col != 'geometry']

@@ -71,9 +71,9 @@ def national_shapefile_parser(country: str, resolution: str, config: dict, inclu
 
     # Apply filtering for specific states if provided
     elif included_states:
-        state_column = resolution_config.get('state_column')
+        state_column = resolution_config.get('id_column')
         if not state_column:
-            raise KeyError(f"State filtering is not supported for the '{resolution}' resolution (no 'state_column' in config).")
+            raise KeyError(f"State filtering is not supported for the '{resolution}' resolution (no 'id_column' in config).")
         if state_column not in gdf.columns:
             raise ValueError(f"'{state_column}' column not found in shapefile for state filtering.")
         gdf = gdf[gdf[state_column].isin(included_states)]

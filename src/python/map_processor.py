@@ -249,7 +249,7 @@ def validate_inputs(resolution: str, states: list[str], timeResolution: str, tim
 if __name__ == "__main__":
     current_path = os.path.dirname(os.path.abspath(__file__))
     country = 'Australia' 
-    resolution = 'Postcode'
+    resolution = 'State'
     included_states = ["Queensland", "Victoria", "New South Wales"]
     config_path = os.path.join(current_path, f'shapefiles\\{country}', 'config.py')
     config = load_config(config_path)
@@ -272,6 +272,8 @@ if __name__ == "__main__":
         time_length = time_length
     )
 
-    map_path = generate_map(resolution, geoJSON)
-    output = json.dumps({"map_html_path": map_path})
-    print(output)
+    print(geoJSON.head)
+
+    # map_path = generate_map(resolution, geoJSON)
+    # output = json.dumps({"map_html_path": map_path})
+    # print(output)
