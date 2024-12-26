@@ -5,86 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MapAlytics | Main</title>
     <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
-    <div id="sidebar-overlay" class="sidebar-overlay"></div>
-    <div id="sidebar-placeholder"></div>
     <div class="main-container">
         <header class="navbar">
             <h1>MapAlytics</h1>
-
-            <div class="globe-icon" id ="globe-icon">
-                <img src="../icons/globe-icon.svg">
-            </div>
-
-            <div class="settings-icon" id ="settings-icon">
-                <img src="../icons/settings-icon.svg" alt="Settings" title="Settings">
+            <div class="navbar-icons">
+                <img src="../icons/globe-icon.svg" class="icon" alt="Globe">
+                <img src="../icons/settings-icon.svg" class="icon" alt="Settings">
             </div>
         </header>
         <main class="content">
-            <div class="dropdowns-container" id ="dropdowns-container">
-                <div class="dropdown" id="state-dropdown-container">
-                    <div class="dropdown-toggle">States</div>
-                    <div class="dropdown-menu" id = 'state-dropdown'>
-                        <label><input type="checkbox" value="New South Wales"> New South Wales</label>
-                        <label><input type="checkbox" value="Victoria"> Victoria</label>
-                        <label><input type="checkbox" value="Queensland"> Queensland</label>
-                        <label><input type="checkbox" value="Australian Capital Territory"> Australian Capital Territory</label>
-                        <label><input type="checkbox" value="South Australia"> South Australia</label>
-                        <label><input type="checkbox" value="Western Australia"> Western Australia</label>
-                        <label><input type="checkbox" value="Northern Territory"> Northern Territory</label>
-                        <label><input type="checkbox" value="Tasmania"> Tasmania</label>
-                    </div>
-                </div>
-            
-                <div class="dropdown" id="year-dropdown-container">
-                    <div class="dropdown-toggle">Years</div>
-                    <div class="dropdown-menu" id = 'year-dropdown'>
-                        <label><input type="checkbox" value="2021"> 2021</label>
-                        <label><input type="checkbox" value="2022"> 2022</label>
-                        <label><input type="checkbox" value="2023"> 2023</label>
-                    </div>
-                </div>
-            </div>
-            <div class="dropdowns-container" id ="resolution-container">
-                <div class="dropdown">
-                    <div class="dropdown-toggle">Map Resolution</div>
-                    <select class="dropdown-menu" id="resolution-dropdown">
-                        <option value=''>Select a resolution</option> <!-- Default empty option -->
-                        <option value="Postcode">Postcodes</option>
-                        <option value="StateElectorate">State Electorates</option>
-                        <option value="FederalElectorate">Federal Electorates</option>
-                        <option value="State">State</option>
-                    </select>
-                </div>
-            </div>
+            <section class="form-container">
+                <!-- Country Dropdown -->
+                <label for="country-select">Select Country:</label>
+                <select id="country-select" class="form-control">
+                    <option value=""></option>
+                </select>
 
-            <div class="button-container">
-                <button id="generate-map-btn" disabled>Generate Map</button>
-                <button id="download-btn" style = "display:none;">Download</button>
-                <div id="download-popup" class="popup-overlay" style="display: none;">
-                    <div class="popup-content">
-                        <h2>Download Map</h2>
-                        <p>Check the file size before downloading!</p>
-                        <p id="file-size"></p>
-                        <button id="start-download-btn">Start Download</button>
-                        <button id="close-popup-btn">Cancel</button>
-                    </div>
-                </div>
-            </div>
-            <div id="map-container" class="map-container">
-                <div id="loading-overlay" class="loading-overlay">
-                    <div class="loading-content">
-                        <div class="spinner"></div>
-                    </div>
-                </div>
-            </div>
+                <!-- Resolution Dropdown -->
+                <label for="resolution-select">Select Resolution:</label>
+                <select id="resolution-select" class="form-control">
+                    <option value=""></option>
+                    <option value="State">State</option>
+                    <option value="FederalElectorate">Federal Electorates</option>
+                    <option value="StateElectorate">State Electorates</option>
+                    <option value="Postcode">Postcodes</option>
+                </select>
+
+                <!-- Time Resolution Dropdown -->
+                <label for="time-resolution-select">Select Time Resolution:</label>
+                <select id="time-resolution-select" class="form-control">
+                    <option value="">Select Time Resolution</option>
+                    <option value="years">Years</option>
+                    <option value="quarters">Quarters</option>
+                    <option value="months">Months</option>
+                </select>
+
+                <!-- Date Picker -->
+                <label for="date-range">Select Date Range:</label>
+                <input id="date-range" class="form-control" type="text" placeholder="Choose Date Range">
+
+                <!-- Buttons -->
+                <button id="generate-map-btn" class="btn primary" disabled>Generate Map</button>
+                <button id="reset-btn" class="btn secondary" style="display: none;">Reset</button>
+            </section>
+
+            <!-- Map Container -->
+            <section id="map-container" class="map-container"></section>
         </main>
     </div>
+
+    <!-- Scripts -->
     <script src="../js/main.js"></script>
-    <script src="../js/settings.js"></script>
-    <script src="https://unpkg.com/html-to-image@latest/dist/html-to-image.js"></script>
-    <script src="../js/download.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 </html>
