@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -29,6 +30,18 @@ app.get('/', (req, res) => {
 
 app.use(logger)
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+function getLocalIP() {
+  const nets = os.networkInterfaces();
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+}
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running at http://${getLocalIP()}:${port}`);
 });
+
