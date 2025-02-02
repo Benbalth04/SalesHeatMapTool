@@ -10,3 +10,5 @@ src/python/shapefiles/Australia/National
 src/python/shapefiles/Australia/StateElectorates
 src/python/shapefiles/Australia/States
 src/python/shapefiles/Australia/Postcodes
+
+**/__pycache__/
