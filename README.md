@@ -1,5 +1,15 @@
 ### Sales Heat Map Analysis Tool
-![Screenshot](example_images/Screenshot1.png)
+## Overview
+
+### Key Features 
+
+### Installation 
+To install this repository, clone it and install the required dependencies
+'''bash
+git clone https://github.com/Benbalth04/MapAlyticsMain.git
+cd MapAlyticsMain
+'''
+
 
 ![Screenshot](example_images/Screenshot2.png)
 
@@ -8,16 +18,3 @@
 
 
 
-
-### Want to only focus on back-end, front end can wait until moving over to Shopify Polaris
-
-#### Overall Plan 
-1) Have three pythons scripts (sales processing, geoson processing and map generation)
-2) Move over to Javascript's leaflet instead of Python's folium (more customisable)
-3) Create more map customisation ability ((e.g. what color maps, any marker locations ?, search bar, legends, expand, date ranges))
-4) Setup event handlers for clicking on choropleths - allowing the zoom feature to be created
-5) Setup firebase authentification and database (for basic preferences and previous marker locations) 
-
-#### Current Steps
-1) Finalise and test that map_proccessor.py produces the same map file
-2) Write some tests as well as error code messages for the python scripts
