@@ -1,3 +1,14 @@
+### Sales Heat Map Analysis Tool
+![Screenshot](example_images/Screenshot1.png)
+
+![Screenshot](example_images/Screenshot2.png)
+
+
+
+
+
+
+
 ### Want to only focus on back-end, front end can wait until moving over to Shopify Polaris
 
 #### Overall Plan 
