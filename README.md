@@ -35,14 +35,10 @@ pip install -r src/python/requirements.txt
 ```
 ### Example Output
 The below video highlights the easy-to-use and interactive sales map produced by the script:
+[Watch the video here](readme_assets/Video.png)
 
 The below screenshot is of the HTML file produced for a Federal Electorate Resolution of QLD, NSW and Victoria Sales Data:
+![Screenshot](readme_assets/Screenshot1.png)
+
+Example of the Information Hover Tool:
 ![Screenshot](readme_assets/Screenshot2.png)
-
-### Process Architecture
-Insert flow chart of process 
-
-
-
-
-
