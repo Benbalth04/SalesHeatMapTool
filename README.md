@@ -37,7 +37,7 @@ pip install -r src/python/requirements.txt
 <b>The below video highlights the easy-to-use and interactive sales map produced by the script:
 [Download the video here](readme_assets/Video.mp4)</b>
 
-![til](readme_assets/GIF.GIF)
+![til](readme_assets/GIF.gif)
 
 The below screenshot is of the HTML file produced for a Federal Electorate Resolution of QLD, NSW and Victoria Sales Data:
 ![Screenshot](readme_assets/Screenshot1.png)
