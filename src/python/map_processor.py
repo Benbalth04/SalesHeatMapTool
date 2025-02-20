@@ -66,7 +66,7 @@ def _create_color_map(column: str, data: gpd.GeoDataFrame, is_percentage: bool =
     
     return cm.LinearColormap(colors=colors, vmin=vmin, vmax=vmax, caption=caption)
 
-def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
+def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame, config: json) -> str:
     """Generate and save the interactive map visualization."""
 
     # Calculate bounds for Australia view
@@ -102,10 +102,10 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
             'Postcode:',
             'Total Sales($):'
         ]
-    elif shapefile_resolution in ['StateElectorate', 'FederalElectorate']:
+    elif shapefile_resolution in ['StateElectorate', 'FederalElectorate'    ]:
         tooltip_fields = [
-            self.config['name_column'],
-            self.config['state_column'],
+            config['name_column'],
+            config['state_column'],
             'sales_2023',
             'sales_2024',
             'sales_pct_change',
@@ -121,22 +121,23 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
         ]
     elif shapefile_resolution == 'State':
         tooltip_fields = [
-            self.config['name_column'],
-            'sales_2023',
-            'sales_2024',
-            'sales_pct_change',
-            'normalized_weighted_pct_change'
+            "province",
+            "total_sales"
+            # 'sales_2023',
+            # 'sales_2024',
+            # 'sales_pct_change',
+            # 'normalized_weighted_pct_change'
         ]
         tooltip_aliases = [
             'State:',
-            '2023 Sales ($):',
-            '2024 Sales ($):',
-            'Change (%):',
-            'Weighted Change (%):'
+            'Sales'
+            # '2024 Sales ($):',
+            # 'Change (%):',
+            # 'Weighted Change (%):'
         ]
     elif shapefile_resolution == 'National':
         tooltip_fields = [
-            self.config['name_column'],
+            config['name_column'],
             'sales_2023',
             'sales_2024',
             'sales_pct_change',
@@ -150,8 +151,16 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
             'Weighted Change (%):'
         ]
 
+    columns_to_keep = ["zip", "province", "total_sales", "geometry"]  # Keep only essential columns
+    merged_gdf = merged_gdf[columns_to_keep]
+    print("reduced columns")
+    global count
+    count = 0 
+
     # Function to get color based on value and colormap
     def style_function(feature):
+        global count 
+        count += 1
         sales = feature['properties'].get('total_sales', 0)
         value = sales
         return {
@@ -168,6 +177,8 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
         style_function=style_function,
         zoom_on_click=True
     ).add_to(fg)
+
+    print(f"Layers. Style call count = {count}")
 
     # Add hover tooltips layer
     folium.GeoJson(
@@ -196,14 +207,19 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
     # Add all feature groups to map
     fg.add_to(m)
     fg_tooltips.add_to(m)
+    print("Feature groups")
 
     # Add colormaps as legends
     colormap.add_to(m)
+    print("color map legend")
+
 
     folium.plugins.Geocoder(
         position="bottomright",
         add_marker=False
     ).add_to(m)
+    print("geo coder")
+
 
     folium.plugins.Fullscreen(
         position="topright",
@@ -211,6 +227,7 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
         title_cancel="Exit me",
         force_separate_button=True,
     ).add_to(m)
+    
 
     # Add layer control
     LayerControl(
@@ -219,7 +236,8 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame) -> str:
     ).add_to(m)
 
     # Save the map
-    output_html_path = os.path.join(os.getcwd(), 'src\\python\\generated_map.html')
+    output_html_path = os.path.join(os.getcwd(), 'src\\generated_map.html')
+    print("saving..")
     m.save(output_html_path)
     return output_html_path
 
@@ -244,7 +262,8 @@ def validate_inputs(resolution: str, states: list[str], timeResolution: str, tim
     
     if endTime <= startTime:
         raise ValueError(f"Invalid start and end times. Start time must be before end time")
-
+    
+    print("Inputs validated")
 
 if __name__ == "__main__":
     current_path = os.path.dirname(os.path.abspath(__file__))
@@ -253,6 +272,7 @@ if __name__ == "__main__":
     included_states = ["Queensland", "Victoria", "New South Wales"]
     config_path = os.path.join(current_path, f'shapefiles\\{country}', 'config.py')
     config = load_config(config_path)
+
     time_resolution = "Month"
     time_length = 6
     start_date = pd.Timestamp(year=2022, month=1, day=1)
@@ -272,8 +292,8 @@ if __name__ == "__main__":
         time_length = time_length
     )
 
-    print(geoJSON.head)
+    print("GEOSON Processedd")
 
-    # map_path = generate_map(resolution, geoJSON)
-    # output = json.dumps({"map_html_path": map_path})
-    # print(output)
+    map_path = generate_map(resolution, geoJSON, config[resolution])
+    output = json.dumps({"map_html_path": map_path})
+    print(output)

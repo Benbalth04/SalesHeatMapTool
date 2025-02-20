@@ -43,7 +43,8 @@ def generate_choropleth_geojson(
         included_states=included_states
     )
 
-    id_column = shapefile_config[shapefile_resolution]['id_column']
+
+    id_column = shapefile_config[shapefile_resolution]['name_column']
 
     # Merge sales data with shapefile GeoDataFrame
     if shapefile_resolution == "Postcode":
@@ -64,9 +65,6 @@ def generate_choropleth_geojson(
         shapefile_gdf[id_column] = shapefile_gdf[id_column].astype(str)
         sales_df['province'] = sales_df['province'].astype(str)
         sales_df_columns = [col.strftime('%b-%Y') if isinstance(col, pd.Timestamp) else col for col in sales_df.columns]
-
-        print(shapefile_gdf.head)
-        return
 
         sales_df.columns = sales_df_columns
             
@@ -90,7 +88,6 @@ def generate_choropleth_geojson(
         [col for col in sales_df_columns if col not in ['zip', 'province', 'country', 'total_sales']]
     )
     merged_gdf = merged_gdf[columns_order]
-    return merged_gdf
 
     # Convert to GeoJSON
     try:

@@ -33,12 +33,13 @@ def national_shapefile_parser(country: str, resolution: str, config: dict, inclu
     shapefile_path = resolution_config.get('path')
     if not shapefile_path or not os.path.exists(shapefile_path):
         raise FileNotFoundError(f"Shapefile path '{shapefile_path}' is invalid or does not exist.")
-
+    
     # Load shapefile
     try:
         gdf = gpd.read_file(shapefile_path)
     except Exception as e:
         raise ValueError(f"Failed to load shapefile '{shapefile_path}': {e}")
+    
 
     # Project to GDA2020 CRS (EPSG:7855)
     try:
@@ -71,11 +72,12 @@ def national_shapefile_parser(country: str, resolution: str, config: dict, inclu
 
     # Apply filtering for specific states if provided
     elif included_states:
-        state_column = resolution_config.get('id_column')
+        state_column = resolution_config.get('name_column')
         if not state_column:
             raise KeyError(f"State filtering is not supported for the '{resolution}' resolution (no 'id_column' in config).")
         if state_column not in gdf.columns:
             raise ValueError(f"'{state_column}' column not found in shapefile for state filtering.")
+        
         gdf = gdf[gdf[state_column].isin(included_states)]
 
     # Simplify geometries
