@@ -1,4 +1,8 @@
 ## Australia Sales Heat Map Analysis Tool
+<b>The below video highlights the easy-to-use and interactive sales map produced by the script:
+[Download the video here](readme_assets/Video.mp4)</b>
+
+![til](readme_assets/GIF.gif)
 ### Overview
 This repository provides users with detailed and interactive visualizations of sales data across Australia. The tool includes a range of heat map customization features, enabling targeted analysis by selecting various metrics and resolutions. This tool is particularly valuable for understanding sales concentration, with key applications in:
 - <b>Marketing</b> 
@@ -34,11 +38,6 @@ npm install
 pip install -r src/python/requirements.txt
 ```
 ### Example Output
-<b>The below video highlights the easy-to-use and interactive sales map produced by the script:
-[Download the video here](readme_assets/Video.mp4)</b>
-
-![til](readme_assets/GIF.gif)
-
 The below screenshot is of the HTML file produced for a Federal Electorate Resolution of QLD, NSW and Victoria Sales Data:
 ![Screenshot](readme_assets/Screenshot1.png)
 
