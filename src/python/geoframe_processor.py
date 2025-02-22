@@ -35,6 +35,8 @@ def generate_choropleth_gdf(
     # Process the sales data
     sales_df = process_sales(sales_data_filepath, start_date, end_date, shapefile_resolution)
 
+    print("Sales Data Processed")
+
     # Process the necessary shapefiles
     shapefile_gdf = national_shapefile_parser(
         country=shapefile_country,
@@ -44,10 +46,9 @@ def generate_choropleth_gdf(
     )
 
 
-    id_column = shapefile_config[shapefile_resolution]['name_column']
-
     # Merge sales data with shapefile GeoDataFrame
     if shapefile_resolution == "Postcode":
+        id_column = shapefile_config[shapefile_resolution]['id_column']
         shapefile_gdf[id_column] = shapefile_gdf[id_column].astype(str)
         sales_df['zip'] = sales_df['zip'].astype(str)
         sales_df_columns = [col.strftime('%b-%Y') if isinstance(col, pd.Timestamp) else col for col in sales_df.columns]
@@ -62,6 +63,7 @@ def generate_choropleth_gdf(
         )
 
     elif shapefile_resolution == "State":
+        id_column = shapefile_config[shapefile_resolution]['name_column']
         shapefile_gdf[id_column] = shapefile_gdf[id_column].astype(str)
         sales_df['province'] = sales_df['province'].astype(str)
         sales_df_columns = [col.strftime('%b-%Y') if isinstance(col, pd.Timestamp) else col for col in sales_df.columns]
@@ -85,8 +87,8 @@ def generate_choropleth_gdf(
     # Reorder columns: postcode, province, country, geometry, total sales, monthly sales
     if shapefile_resolution != 'State':
         columns_order = (
-            ['province', 'country', 'geometry', 'total_sales'] +
-            [col for col in sales_df_columns if col not in ['zip', 'province', 'country', 'total_sales']]
+            ['zip', 'country', 'geometry', 'total_sales'] +
+            [col for col in sales_df_columns if col not in ['zip', 'country', 'total_sales']]
         )
     else:
         columns_order = (

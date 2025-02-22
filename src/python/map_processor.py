@@ -17,7 +17,7 @@ import sys
 import branca.colormap as cm
 import matplotlib.pyplot as plt
 
-from geoson_processor import generate_choropleth_gdf
+from geoframe_processor import generate_choropleth_gdf
 
 def load_config(config_path):
     # Add the directory containing the config file to Python path
@@ -109,57 +109,45 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame, config: jso
         tooltip_aliases = [
             'Postcode:',
             'Total Sales($):'
-        ]
-    elif shapefile_resolution in ['StateElectorate', 'FederalElectorate'    ]:
+        ]    
+        columns_to_keep = ["zip", "total_sales", "geometry"]
+
+    elif shapefile_resolution in ['StateElectorate', 'FederalElectorate']:
         tooltip_fields = [
             config['name_column'],
             config['state_column'],
-            'sales_2023',
-            'sales_2024',
-            'sales_pct_change',
-            'normalized_weighted_pct_change'
+            'total_sales'
         ]
         tooltip_aliases = [
             'Electorate:',
             'State:',
-            '2023 Sales ($):',
-            '2024 Sales ($):',
-            'Change (%):',
-            'Weighted Change (%):'
-        ]
+            'Sales: $'
+        ]    
+        columns_to_keep = ["zip", "total_sales", "geometry"]
+
     elif shapefile_resolution == 'State':
         tooltip_fields = [
-            "province",
-            "total_sales"
-            # 'sales_2023',
-            # 'sales_2024',
-            # 'sales_pct_change',
-            # 'normalized_weighted_pct_change'
+            'province',
+            'total_sales'
         ]
         tooltip_aliases = [
             'State:',
             'Sales: $'
-            # '2024 Sales ($):',
-            # 'Change (%):',
-            # 'Weighted Change (%):'
         ]
+        columns_to_keep = ["province", "total_sales", "geometry"]
+
     elif shapefile_resolution == 'National':
         tooltip_fields = [
             config['name_column'],
-            'sales_2023',
-            'sales_2024',
-            'sales_pct_change',
-            'normalized_weighted_pct_change'
+            'total_sales'
         ]
         tooltip_aliases = [
             'Country:',
-            '2023 Sales ($):',
-            '2024 Sales ($):',
-            'Change (%):',
-            'Weighted Change (%):'
+            'Sales: $'
         ]
+        columns_to_keep = ["country", "total_sales", "geometry"]
 
-    columns_to_keep = ["province", "total_sales", "geometry"]  # Keep only essential columns
+
     merged_gdf = merged_gdf[columns_to_keep]
     
     # Function to get color based on value and colormap
@@ -180,6 +168,8 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame, config: jso
         style_function=style_function,
         zoom_on_click=True
     ).add_to(fg)
+
+    print("Folium Layers Generated")
 
     # Add hover tooltips layer
     folium.GeoJson(
@@ -208,18 +198,14 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame, config: jso
     # Add all feature groups to map
     fg.add_to(m)
     fg_tooltips.add_to(m)
-    print("Feature groups")
 
     # Add colormaps as legends
     colormap.add_to(m)
-    print("color map legend")
-
 
     folium.plugins.Geocoder(
         position="bottomright",
         add_marker=False
     ).add_to(m)
-    print("geo coder")
 
 
     folium.plugins.Fullscreen(
@@ -269,8 +255,8 @@ def validate_inputs(resolution: str, states: list[str], timeResolution: str, tim
 if __name__ == "__main__":
     current_path = os.path.dirname(os.path.abspath(__file__))
     country = 'Australia' 
-    resolution = 'State'
-    included_states = ["Queensland", "Victoria", "New South Wales", "Tasmania", "Western Australia", "South Australia", "Northern Territory", "Australian Capital Territory"]
+    resolution = 'Postcode'
+    included_states = ["Queensland"]
     config_path = os.path.join(current_path, f'shapefiles\\{country}', 'config.py')
     config = load_config(config_path)
 
@@ -292,6 +278,8 @@ if __name__ == "__main__":
         time_resolution=time_resolution, 
         time_length = time_length
     )
+
+    print("GDF Processed")
 
     map_path = generate_map(resolution, gdf, config[resolution])
     output = json.dumps({"map_html_path": map_path})
