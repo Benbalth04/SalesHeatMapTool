@@ -17,7 +17,7 @@ import sys
 import branca.colormap as cm
 import matplotlib.pyplot as plt
 
-from geoson_processor import generate_choropleth_geojson
+from geoson_processor import generate_choropleth_gdf
 
 def load_config(config_path):
     # Add the directory containing the config file to Python path
@@ -69,8 +69,16 @@ def _create_color_map(column: str, data: gpd.GeoDataFrame, is_percentage: bool =
 def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame, config: json) -> str:
     """Generate and save the interactive map visualization."""
 
+    if isinstance(merged_gdf, dict):
+        merged_gdf = gpd.GeoDataFrame.from_features(merged_gdf["features"])
+
+    if merged_gdf.crs.to_epsg() == 7855:
+         # Reproject to EPSG:4326 (WGS84)
+        merged_gdf = merged_gdf.to_crs(epsg=4326)
+
     # Calculate bounds for Australia view
     bounds = merged_gdf.geometry.total_bounds
+    
     center_lat = (bounds[1] + bounds[3]) / 2
     center_lon = (bounds[0] + bounds[2]) / 2
 
@@ -130,7 +138,7 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame, config: jso
         ]
         tooltip_aliases = [
             'State:',
-            'Sales'
+            'Sales: $'
             # '2024 Sales ($):',
             # 'Change (%):',
             # 'Weighted Change (%):'
@@ -151,16 +159,11 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame, config: jso
             'Weighted Change (%):'
         ]
 
-    columns_to_keep = ["zip", "province", "total_sales", "geometry"]  # Keep only essential columns
+    columns_to_keep = ["province", "total_sales", "geometry"]  # Keep only essential columns
     merged_gdf = merged_gdf[columns_to_keep]
-    print("reduced columns")
-    global count
-    count = 0 
-
+    
     # Function to get color based on value and colormap
     def style_function(feature):
-        global count 
-        count += 1
         sales = feature['properties'].get('total_sales', 0)
         value = sales
         return {
@@ -177,8 +180,6 @@ def generate_map(shapefile_resolution, merged_gdf: gpd.GeoDataFrame, config: jso
         style_function=style_function,
         zoom_on_click=True
     ).add_to(fg)
-
-    print(f"Layers. Style call count = {count}")
 
     # Add hover tooltips layer
     folium.GeoJson(
@@ -269,7 +270,7 @@ if __name__ == "__main__":
     current_path = os.path.dirname(os.path.abspath(__file__))
     country = 'Australia' 
     resolution = 'State'
-    included_states = ["Queensland", "Victoria", "New South Wales"]
+    included_states = ["Queensland", "Victoria", "New South Wales", "Tasmania", "Western Australia", "South Australia", "Northern Territory", "Australian Capital Territory"]
     config_path = os.path.join(current_path, f'shapefiles\\{country}', 'config.py')
     config = load_config(config_path)
 
@@ -280,7 +281,7 @@ if __name__ == "__main__":
 
     validate_inputs(resolution, included_states, time_resolution, time_length, start_date, end_date)
 
-    geoJSON = generate_choropleth_geojson(
+    gdf = generate_choropleth_gdf(
         sales_data_filepath = os.path.join(current_path, 'data', 'sales.xlsx'),
         shapefile_country = country,
         shapefile_resolution = resolution,
@@ -292,8 +293,6 @@ if __name__ == "__main__":
         time_length = time_length
     )
 
-    print("GEOSON Processedd")
-
-    map_path = generate_map(resolution, geoJSON, config[resolution])
+    map_path = generate_map(resolution, gdf, config[resolution])
     output = json.dumps({"map_html_path": map_path})
     print(output)

@@ -4,7 +4,7 @@ import json
 from sales_processor import process_sales
 from shapefile_processor import national_shapefile_parser
 
-def generate_choropleth_geojson(
+def generate_choropleth_gdf(
     sales_data_filepath: str,
     shapefile_country: str,
     shapefile_resolution: str,
@@ -33,7 +33,7 @@ def generate_choropleth_geojson(
         dict: A GeoJSON dictionary suitable for a Leaflet.js choropleth layer.
     """
     # Process the sales data
-    sales_df = process_sales(sales_data_filepath, start_date, end_date)
+    sales_df = process_sales(sales_data_filepath, start_date, end_date, shapefile_resolution)
 
     # Process the necessary shapefiles
     shapefile_gdf = national_shapefile_parser(
@@ -83,16 +83,16 @@ def generate_choropleth_geojson(
     merged_gdf['geometry'] = merged_gdf['geometry'].fillna(None)
 
     # Reorder columns: postcode, province, country, geometry, total sales, monthly sales
-    columns_order = (
-        ['zip', 'province', 'country', 'geometry', 'total_sales'] +
-        [col for col in sales_df_columns if col not in ['zip', 'province', 'country', 'total_sales']]
-    )
+    if shapefile_resolution != 'State':
+        columns_order = (
+            ['province', 'country', 'geometry', 'total_sales'] +
+            [col for col in sales_df_columns if col not in ['zip', 'province', 'country', 'total_sales']]
+        )
+    else:
+        columns_order = (
+            ['province', 'country', 'geometry', 'total_sales'] +
+            [col for col in sales_df_columns if col not in ['province', 'country', 'total_sales']]
+        )
     merged_gdf = merged_gdf[columns_order]
 
-    # Convert to GeoJSON
-    try:
-        geojson_data = json.loads(merged_gdf.to_json())
-    except Exception as e:
-        raise ValueError(f"Error converting GeoDataFrame to GeoJSON: {e}")
-    
-    return geojson_data
+    return merged_gdf

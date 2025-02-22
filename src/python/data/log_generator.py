@@ -52,7 +52,7 @@ def generate_transaction_log(start_date, end_date, num_transactions):
     dates = [start_date + timedelta(seconds=sec) for sec in random_seconds]
     
     # Generate random postcodes between 1 and 1000, converted to 4-digit strings
-    postcodes = [f'{postcode:04d}' for postcode in np.random.randint(1000, 5000, num_transactions)]
+    postcodes = [f'{postcode:04d}' for postcode in np.random.randint(1000, 8000, num_transactions)]
     provinces = [get_australian_state_from_postcode(postcode) for postcode in postcodes]
     countries = ['Australia' for postcode in postcodes] 
     
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     # Example dates and number of transactions
     start_date = datetime(2022, 1, 1)
     end_date = datetime(2023, 12, 31)
-    num_transactions = 1000
+    num_transactions = 10000
     
     # Generate transaction log
     transaction_log = generate_transaction_log(start_date, end_date, num_transactions)
